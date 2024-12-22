@@ -1,73 +1,132 @@
-#include<string.h>
-#include<stdio.h>
-#include<stdlib.h>
-#define max 5
-int front=0,rear=-1, count=0;
-char cq[max];
-void cqinsert()
-{
-  char ele;
-  if(count==max)
-  {
-    printf("Queue is full\n\n");
-    return;
-  }
-  printf("Enter the element to be inserted\n\n");
-  scanf("%s",&ele);
-  rear=(rear+1)%max;
-  cq[rear]=ele;
-  count++;
-}
-void cqdelete()
-{
-  if(count==0)
-  {
-    printf("Queue is empty\n\n");
-    return;
-  }
-  printf("Element deleted is = %c \n\n",cq[front]);
-  front =(front+1)%max;
-  count--;
-}
-void cqdisplay()
-{
-  int j=front,i;
-  if(count==0)
-  {
-    printf("Queue is empty\n\n"); return;
-  }
-  printf("Circular Queue content is \n\n");
-  for(i=1;i<=count;i++)
-  {
-    printf("%c\t",cq[j]);
-    j=(j+1)%max;
-  }
-  printf("\n\n");
-}
-void main()
-{
-  int ch;
-  do
-  {
-    printf("1:insert\t 2:delete\t 3:display\t 4:exit\n\n");
-    printf("Enter your choice\n\n");
-    scanf("%d",&ch);
-    switch(ch)
-    {
-      case 1: 
-        cqinsert();
-        break;  
-      case 2: 
-        cqdelete();
-        break;
-      case 3: 
-        cqdisplay();
-        break;
-      case 4: 
-        exit(0);
-      default: 
-        printf("Invalid choice\n\n"); break;
-    }
-  }
-  while(1);
-}
+Program to display Normal, Binomial Poisson, Bernoulli disrtibutions for a given frequency distribution
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm, binom, poisson, bernoulli
+
+def get_user_data():
+    # Get the frequency distribution input from the user
+    data_input = input("Enter the data values separated by commas (e.g., 10, 20, 30): ")
+    frequencies_input = input("Enter the corresponding frequencies separated by commas (e.g., 2, 3, 4): ")
+    
+    # Convert the inputs into lists of integers
+    data = list(map(int, data_input.split(',')))
+    frequencies = list(map(int, frequencies_input.split(',')))
+    
+    return data, frequencies
+
+def plot_normal_distribution(data, frequencies):
+    # Fit and plot Normal distribution
+    mean = np.mean(data)
+    std_dev = np.std(data)
+    
+    x = np.linspace(min(data), max(data), 100)
+    pdf = norm.pdf(x, mean, std_dev)
+
+    plt.plot(x, pdf, 'r-', lw=2, label='Normal Distribution')
+    plt.title('Normal Distribution')
+    plt.xlabel('Value')
+    plt.ylabel('Probability Density')
+    plt.show()
+
+def plot_binomial_distribution(data, frequencies):
+    # Fit and plot Binomial distribution (assuming n is max(data) and p is mean/len(data))
+    n = max(data)
+    p = np.mean(data) / n
+    
+    x = np.arange(0, n+1)
+    pmf = binom.pmf(x, n, p)
+
+    plt.bar(x, pmf, alpha=0.7, color='b', label='Binomial Distribution')
+    plt.title('Binomial Distribution')
+    plt.xlabel('Value')
+    plt.ylabel('Probability')
+    plt.show()
+
+def plot_poisson_distribution(data, frequencies):
+    # Fit and plot Poisson distribution (lambda is the mean of the data)
+    lam = np.mean(data)
+    
+    x = np.arange(0, max(data)+1)
+    pmf = poisson.pmf(x, lam)
+
+    plt.bar(x, pmf, alpha=0.7, color='g', label='Poisson Distribution')
+    plt.title('Poisson Distribution')
+    plt.xlabel('Value')
+    plt.ylabel('Probability')
+    plt.show()
+
+def plot_bernoulli_distribution(data, frequencies):
+    # Assuming binary outcome for Bernoulli
+    success_prob = np.mean(data) / max(data)
+    
+    x = [0, 1]
+    pmf = bernoulli.pmf(x, success_prob)
+
+    plt.bar(x, pmf, alpha=0.7, color='purple', label='Bernoulli Distribution')
+    plt.title('Bernoulli Distribution')
+    plt.xlabel('Value')
+    plt.ylabel('Probability')
+    plt.show()
+
+def analyze_distributions(data, frequencies):
+    print("Analyzing Normal Distribution:")
+    plot_normal_distribution(data, frequencies)
+    
+    print("Analyzing Binomial Distribution:")
+    plot_binomial_distribution(data, frequencies)
+    
+    print("Analyzing Poisson Distribution:")
+    plot_poisson_distribution(data, frequencies)
+    
+    print("Analyzing Bernoulli Distribution:")
+    plot_bernoulli_distribution(data, frequencies)
+
+# Main program
+data, frequencies = get_user_data()
+analyze_distributions(data, frequencies)
+
+
+
+
+
+Concept explanation:
+1. Normal Distribution
+    • What it is: The Normal distribution (also called the Gaussian distribution) is the most common probability distribution. It looks like a bell-shaped curve and is symmetrical around the mean.
+    • Real-world analogy: Imagine you’re measuring the height of a group of people. Most people will have heights around the average (mean), and fewer people will be much taller or much shorter. The majority of the data clusters around the average with fewer extreme values on either side.
+    • Key Points:
+        ◦ Symmetrical bell curve.
+        ◦ Mean = Median = Mode.
+        ◦ Many natural phenomena, like people's heights, shoe sizes, or IQ scores, follow a Normal distribution.
+2. Binomial Distribution
+    • What it is: The Binomial distribution is used to model the number of successful outcomes in a fixed number of independent trials, where each trial has two possible outcomes (like flipping a coin: heads or tails).
+    • Real-world analogy: Imagine you flip a coin 10 times. If you’re trying to figure out how many heads you’ll get, the Binomial distribution helps you calculate the probability of getting 0 heads, 1 head, 2 heads, all the way up to 10 heads.
+    • Key Points:
+        ◦ Two possible outcomes: success or failure (like heads or tails).
+        ◦ Fixed number of trials (e.g., flipping a coin 10 times).
+        ◦ Probability of success (like getting heads) stays the same for each trial.
+3. Poisson Distribution
+    • What it is: The Poisson distribution is used to model the probability of a given number of events happening in a fixed interval of time or space, where these events occur independently of each other.
+    • Real-world analogy: Imagine you’re running a bakery, and you want to know the probability of a certain number of customers arriving in the next hour. The Poisson distribution can help you predict this based on the average number of customers you usually get in an hour.
+    • Key Points:
+        ◦ The events are random and independent.
+        ◦ It’s used when you’re counting the number of occurrences over a fixed period or space (e.g., customers arriving, phone calls received).
+        ◦ Average rate of occurrence (λ or lambda) is constant.
+4. Bernoulli Distribution
+    • What it is: The Bernoulli distribution models the probability of a single trial with two possible outcomes, typically referred to as success (1) or failure (0).
+    • Real-world analogy: Suppose you're tossing a coin one time. The outcome can only be heads or tails (success or failure). The Bernoulli distribution helps model this scenario.
+    • Key Points:
+        ◦ There is just one trial (e.g., one coin flip).
+        ◦ The probability of success is constant.
+        ◦ The result is binary: either success (1) or failure (0).
+
+Key Differences:
+    • Normal Distribution: Continuous and symmetrical. It models things like people's heights, weights, and test scores where the data is spread around the mean in a bell-shaped curve.
+    • Binomial Distribution: Discrete. It models how many times a success happens out of a fixed number of trials, such as how many heads you get when you flip a coin 10 times.
+    • Poisson Distribution: Discrete. It models how many times an event happens in a fixed amount of time or space (e.g., the number of cars passing by in an hour or phone calls received).
+    • Bernoulli Distribution: Discrete and binary. It models a single yes/no outcome (success or failure) for one event, such as one coin flip.
+Visualizing Distributions:
+    • Normal Distribution: Think of a bell curve. Most values are clustered around the mean, and fewer values are farther away.
+    • Binomial Distribution: The histogram of outcomes peaks around the most likely number of successes (like getting 5 heads out of 10 coin flips).
+    • Poisson Distribution: It shows how the likelihood of different numbers of events drops off quickly (e.g., it’s rare to get 10 customers in 5 minutes, but more common to get 1 or 2).
+    • Bernoulli Distribution: It’s simple and binary, like flipping a coin. The bar chart has just two bars: one for success (1) and one for failure (0).
